@@ -1,29 +1,36 @@
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-//create a prop containing the ip 
 
- function HomePage(){
-    const [ip, ipData] = useState("") // varaible of the fetched ip
-    const [showedTimeZone, showTimeZone] = useState(false) // event that shows ip timezone
-                                         
-  useEffect(()=>{
-    fetch("https://api.ipify.org?format=json")
-    .then(res => res.json())
-    .then(data => {
-        ipData(data.ip)
-        console.log(data.ip)
+function HomePage() {
+  const [showedTimeZone, setShowedTimeZone] = useState(false); // Controls display of IP timezone
+  const [ip, setIp] = useState(""); // State to store the fetched IP address
 
-    })
-    .catch(error =>{
-      console.error("failed to fetch ip address:", error)
-    })
-      
+  useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const data = await fetch("https://api.ipify.org?format=json")
+          .then(res => res.json())
+          .then(data => {
+            console.log(data);
+            return data.ip;
+          });
+        setIp(data); // Store the fetched IP address in state
+        console.log("Fetched IP:", data);
+      } catch (error) {
+        console.error("Error fetching IP address:", error);
+      }
+    };
 
-  }, [showedTimeZone])
-  
-   const css = {
+    fetchIp(); // Call the function to fetch IP on component mount
+  }, []); // Empty dependency array ensures this runs only once
+
+  const handleShowTimeZone = (e) => {
+    e.preventDefault();
+    setShowedTimeZone(true); // Show the timezone link
+  };
+
+  // Inline CSS for styling
+  const css = {
     color: "black",
     backgroundColor: "white",
     textAlign: "center",
@@ -33,37 +40,25 @@ import { Link } from "react-router-dom";
     margin: "10px",
     width: "fit-content",
     position: "absolute",
-    top: "50%",   
+    top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    zIndex: "1000"
-  }
+    zIndex: "1000",
+  };
 
-    function showIpTimeZone(e){
-      e.preventDefault();
-      
-        showTimeZone(true)
-    
+  return (
+    <div>
+      <div className="UserIpTimezone" style={css}>
+        <h1>Timezone Based on IP</h1>
+        <button onClick={handleShowTimeZone}>Show Timezone</button>
+        {showedTimeZone ? (
+          <Link to={`/ip/${ip}`}> {ip} </Link> 
+        ) : (
+          <p>Click the button to show the timezone</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
-    }
-  
-    return (
-        <div>
-         <div className="UserIpTimezone" style={css}>
-            <title>timezone based on ip</title>
-            <button onClick={showIpTimeZone} >show timezone</button>
-            {showedTimeZone ? (
-              <Link to = "src\ip.jsx">{ip}</Link>
-            ) : (
-              <p>click the button to show the timezone</p>
-            )}  
-        </div>
-        
-        </div>
-      
-
-    )
- }
-
-export default HomePage()
- // https://timeapi.io/api/time/current/ip?ipAddress=237.71.232.203
+export default HomePage;

@@ -1,9 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-function ip( {ip}){
-
+function ip(){
+    const {ip} = useParams()
     const [timezone, assignTimeZone] = useState("")  // variable of timezone taken after ip fetch
     useEffect(() => {
         if(ip){  
@@ -16,9 +17,25 @@ function ip( {ip}){
         })
     }
     }, [ip])
+
+    const css = {
+        color: "black",
+        backgroundColor: "white",
+        textAlign: "center",
+        border: "1px solid black",
+        borderRadius: "5px",
+        padding: "10px",
+        margin: "10px",
+        width: "fit-content",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex: "1000",
+      };
     return (
         <div>
-            <div className="IpTimezone">
+            <div className="IpTimezone" style={css}>
                 <title>timezone based on ip</title>
                 <p>{timezone}</p>
             </div>
@@ -28,4 +45,4 @@ function ip( {ip}){
 
 }
 
-export default ip()
+export default ip
